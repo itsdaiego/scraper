@@ -12,15 +12,16 @@
 
 (defn get-articles-titles
   [dom]
-  (html/select dom [:article.content :h2.title-featured :a]))
+  (map html/text (html/select dom [:article.content :h2])))
 
-(defn parse-content
-  [content]
-  (hash-map content :content))
->>>>>>> 3945bcc... get titles content
+(defn print-articles-titles
+  [titles]
+  (doseq [title titles] (println title)))
 
 (defn -main
   ""
   [& args]
-  (let [titles (parse-content(get-articles-titles(get-chess-dom)))]
-    (println titles)))
+  (print-articles-titles
+    (get-articles-titles
+      (get-chess-dom))))
+
