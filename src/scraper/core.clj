@@ -1,6 +1,8 @@
 (ns scraper.core
   (:require [net.cgrand.enlive-html :as html]
-            [org.httpkit.client :as http])
+            [org.httpkit.client :as http]
+            [postal.core :as postal]
+            [environ.core :as environ])
   (:gen-class))
 
 (use 'clojure.tools.trace)
@@ -18,10 +20,25 @@
   [titles]
   (doseq [title titles] (println title)))
 
+
+(def email (environ/env :email))
+(def pass (environ/env :pass))
+
+(def conn {:host "smtp.gmail.com"
+           :ssl true
+           :user email
+           :pass pass})
+
+(defn send-email
+  [titles]
+  (postal/send-message conn {:from email
+                    :to email
+                    :subject "A message, from the past"
+                    :body "Hi there, me!"}))
+
 (defn -main
   ""
   [& args]
-  (print-articles-titles
+  (send-email(print-articles-titles
     (get-articles-titles
-      (get-chess-dom))))
-
+      (get-chess-dom)))))
