@@ -10,16 +10,22 @@
 (defn get-chess-dom
   []
   (html/html-snippet
-    (:body @(http/get "https://www.chess.com/articles" {:insecure? true}))))
+    (:body @(http/get "https://www.chess.com/titles" {:insecure? true}))))
 
-(defn get-articles-titles
+(defn get-articles-title
   [dom]
-  (map html/text (html/select dom [:article.content :h2])))
+  (map html/text (html/select dom [:title.content :h2])))
 
-(defn print-articles-titles
+(defn print-articles-title
   [titles]
-  (doseq [title titles] (println title)))
+  ; (doseq [title titles] (println title)))
+  (do (doseq [title titles] (println title))
+      (lazy-seq titles)))
 
+
+(defn get-newest-title
+  [titles]
+  (first titles))
 
 (def email (environ/env :email))
 (def pass (environ/env :pass))
@@ -30,15 +36,17 @@
            :pass pass})
 
 (defn send-email
-  [titles]
+  [featured-title]
   (postal/send-message conn {:from email
-                    :to email
-                    :subject "A message, from the past"
-                    :body "Hi there, me!"}))
+                             :to email
+                             :subject "New chess.com featured article"
+                             :body featured-title}))
 
 (defn -main
   ""
   [& args]
-  (send-email(print-articles-titles
-    (get-articles-titles
-      (get-chess-dom)))))
+  (send-email
+    (get-newest-title
+      (print-articles-title
+        (get-articles-title
+          (get-chess-dom))))))
