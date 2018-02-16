@@ -49,4 +49,4 @@
     (get-newest-title
       (print-articles-title
         (get-articles-title
-          (get-chess-dom))))))
+          (get-chess-dom)))))) ; TODO: the -> bult in macro could also be used
