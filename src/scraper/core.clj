@@ -45,8 +45,8 @@
 (defn -main
   ""
   [& args]
-  (send-email
-    (get-newest-title
-      (print-articles-title
-        (get-articles-title
-          (get-chess-dom)))))) ; TODO: the -> bult in macro could also be used
+  (-> (get-chess-dom)
+      (get-articles-title)
+      (print-articles-title)
+      (get-newest-title)
+      (send-email)))
